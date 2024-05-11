@@ -1,16 +1,31 @@
 locals {
   records = flatten([
-    for rrset in var.resource_record_sets : [
-      for i, data in rrset.data : {
-        key = "${rrset.name}-${rrset.type}-${i}-${sha1(data)}"
-        value = {
-          name = rrset.name,
-          type = rrset.type,
-          ttl  = rrset.ttl,
-          data = data,
+    [
+      for rrset in var.resource_record_sets : [
+        for i, value in rrset.values : {
+          key = "${rrset.name}-${rrset.type}-${i}-${sha1(value)}"
+          value = {
+            name  = rrset.name,
+            type  = rrset.type,
+            ttl   = rrset.ttl,
+            value = value,
+          }
         }
-      }
-    ]
+      ]
+    ],
+    [
+      for rrset in var.resource_record_sets : [
+        for i, data in rrset.datas : {
+          key = "${rrset.name}-${rrset.type}-${i}-${sha1(jsonencode(data))}"
+          value = {
+            name = rrset.name,
+            type = rrset.type,
+            ttl  = rrset.ttl,
+            data = data,
+          }
+        }
+      ]
+    ],
   ])
 
   records_map = {

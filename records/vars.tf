@@ -3,6 +3,11 @@ variable "resource_record_sets" {
     name = string
     type = string
     ttl  = number
-    data = list(string)
+
+    # todo: define the full schema for these
+    datas  = optional(list(map(any)), [])
+    values = optional(list(string), [])
   }))
+
+  # todo: add a validation
 }
